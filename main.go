@@ -1,6 +1,7 @@
 package main
 
 import (
+	"api-rest/db"
 	"api-rest/models"
 	"net/http"
 
@@ -8,6 +9,7 @@ import (
 )
 
 func main() {
+	db.InitDB()
 	server := gin.Default() //Configura um servidor HTTP
 
 	server.GET("/events", getEvents)
