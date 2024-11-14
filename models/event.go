@@ -29,6 +29,20 @@ func (e *Event) Save() error {
 	return nil
 }
 
+func GetEventById(id int64) (*Event, error) {
+	query := "SELECT * FROM events WHERE id = $1"
+
+	row := db.DB.QueryRow(query, id)
+
+	var event Event
+	error := row.Scan(&event.Id, &event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserId)
+	if error != nil {
+		return nil, error
+	}
+
+	return &event, nil
+}
+
 func GetAllEvents() ([]Event, error) {
 	query := "SELECT * FROM events"
 	rows, err := db.DB.Query(query)
