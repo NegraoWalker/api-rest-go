@@ -66,3 +66,19 @@ func GetAllEvents() ([]Event, error) {
 
 	return events, nil
 }
+
+func (event Event) Update() error {
+	query := `
+    UPDATE events
+    SET name = $1, description = $2, location = $3, dateTime = $4
+    WHERE id = $5
+    `
+	stmt, error := db.DB.Prepare(query)
+	if error != nil {
+		return error
+	}
+	defer stmt.Close()
+
+	_, error = stmt.Exec(event.Name, event.Description, event.Location, event.DateTime, event.Id)
+	return error
+}
