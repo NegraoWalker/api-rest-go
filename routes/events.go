@@ -2,6 +2,7 @@ package routes
 
 import (
 	"api-rest/models"
+	"api-rest/utils"
 	"database/sql"
 	"net/http"
 	"strconv"
@@ -39,8 +40,21 @@ func getEvents(context *gin.Context) {
 }
 
 func createEvent(context *gin.Context) {
+	token := context.Request.Header.Get("Authorization")
+	if token == "" {
+		context.JSON(http.StatusUnauthorized, gin.H{"message": "Not authorized"})
+		return
+	}
+
+	error := utils.VerifyToken(token)
+
+	if error != nil {
+		context.JSON(http.StatusUnauthorized, gin.H{"message": "Not authorized"})
+		return
+	}
+
 	var event models.Event
-	error := context.ShouldBindJSON(&event)
+	error = context.ShouldBindJSON(&event)
 
 	if error != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse request data."})
